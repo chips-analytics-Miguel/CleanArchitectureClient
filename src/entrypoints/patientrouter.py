@@ -1,8 +1,9 @@
 from datetime import date, datetime
-from typing import Dict
+from typing import Dict, List
 from fastapi import APIRouter
 from src.config import settings
-from src.domain.schemas import PatientCreateSchema, PatientModel, PatientSchema
+from src.domain.aggregats import PatientModel
+from src.domain.schemas import PatientCreateSchema
 from src.services_layers.commandsquerieshandler import PatientCommandServiceHandler,PatientQueryServiceHandler
 #from src.interfaces.abstractrepository import PatientInterface
 from circuitbreaker import circuit, CircuitBreaker
@@ -15,34 +16,6 @@ class Circuitbreaker(CircuitBreaker):
         EXPECTED_EXCEPTION = Exception
 
 router = APIRouter(prefix="/api/v1/patient")
-
-@router.post("/test/")
-async def create_patient(patient: PatientCreateSchema):
-        patient_dict=patient.dict()
-        json_obj = {
-        "active": True,
-        "name": [
-            {
-                "family": patient_dict['family_name'],
-                "given" : patient_dict["given_name"],
-                "text": patient_dict['family_name'] +' '+ " ".join(patient_dict["given_name"]),
-            }],
-        "gender":patient_dict["gender"],
-        "telecom": [
-            {
-            "system": "phone",
-            "use": "mobile",
-            "value": patient_dict["phone_number"]
-            }
-        ],
-        "birthDate": patient_dict["birthdate"]
-        }
-        pat = PatientModel.parse_obj(json_obj)
-        patient = pat.dict()
-        # # inserted_patient_id = patient_service.create_patient(patient_data)
-        # # response_content = { "patient_id": inserted_patient_id }
-        # # return JSONResponse(content=response_content)
-        return patient
 
 #command handlers
 @router.post("/", status_code=201)
@@ -87,12 +60,12 @@ def update_patient_by_id(patient_id: str, patient: PatientSchema)->PatientSchema
 """
 
 # Queries handlers
-@router.get("/")
+@router.get("/",response_model=List[PatientModel])
 @circuit(cls=CircuitBreaker)
-def get_patients()->PatientSchema:
+def get_patients()->List[PatientModel]:
     return PatientQueryServiceHandler.get_patients()
 
-@router.get("/{patient_id}")
+@router.get("/{patient_id}",response_model=PatientModel)
 @circuit(cls=CircuitBreaker)
-def get_patient_By_Id(patient_id: str)->PatientSchema:
+def get_patient_By_Id(patient_id: str)->PatientModel:
     return PatientQueryServiceHandler.get_patient_by_id(patient_id)
