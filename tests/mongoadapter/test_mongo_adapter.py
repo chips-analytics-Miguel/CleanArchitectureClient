@@ -1,6 +1,6 @@
 import unittest
 from pymongo import MongoClient
-from  src.adapters.mongodb.mongoadapter import MongoDBAdapter
+from  src.adapters.mongoadapter import MongoDBAdapter
 
 class TestMongoDBAdapter(unittest.TestCase):
     def setUp(self):
