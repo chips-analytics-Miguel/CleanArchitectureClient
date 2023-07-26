@@ -1,25 +1,25 @@
 from abc import ABC, abstractmethod
 from typing import List
+from src.domain.aggregats import PatientModel
 from src.domain.schemas import PatientCreateSchema
-#from src.domain.entities import PatientModel
 
 
-class PatientInterface(ABC):
+class AbstractRepository(ABC):
 
     @abstractmethod
-    def save_patient(patient: PatientCreateSchema) -> str:
+    def save_patient(patient: PatientModel) -> str:
         pass
 
     @abstractmethod
-    def get_patient_by_id(self, patient_id: str) -> PatientCreateSchema:
+    def get_patient_by_id(self, patient_id: str) -> PatientModel:
         pass
     
     @abstractmethod
-    def get_patients(self) -> List[PatientCreateSchema]:
+    def get_patients(self) -> List[PatientModel]:
         pass
 
     @abstractmethod
-    def update_patient(self, id: str, phone_number: str) -> PatientCreateSchema:
+    def update_patient(self, id: str, phone_number: str) -> PatientModel:
         pass
 
     """@abstractmethod
@@ -27,5 +27,5 @@ class PatientInterface(ABC):
         pass"""
 
     @abstractmethod
-    def del_patient(self, patient_id: str) -> None:
+    def del_patient(self, patient_id: str) -> str:
         pass
