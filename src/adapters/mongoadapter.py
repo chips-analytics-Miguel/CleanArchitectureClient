@@ -6,11 +6,12 @@ from fastapi import HTTPException
 from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.errors import PyMongoError
-from src.domain.schemas import PatientCreateSchema, PatientSchema
-from src.interfaces.abstractrepository import PatientInterface
+from src.domain.aggregats import PatientModel
+from src.domain.schemas import PatientCreateSchema
+from src.interfaces.abstractrepository import AbstractRepository
 from src.config import settings
 
-class MongoDBAdapter(PatientInterface):
+class MongoDBAdapter(AbstractRepository):
     def __init__(self, mongo_uri: str):
         self.client = MongoClient(mongo_uri)
         self.db = self.client.get_database()
@@ -27,12 +28,12 @@ class MongoDBAdapter(PatientInterface):
     
     def get_patient_by_id(self, patient_id: str) -> PatientCreateSchema:
         """Get patient by id."""
-        patient : PatientSchema = self.get_patient_collection().find_one({"_id": ObjectId(patient_id)}, {"_id": 0})
+        patient : PatientModel = self.get_patient_collection().find_one({"_id": ObjectId(patient_id)}, {"_id": 0})
         if not patient:
             raise HTTPException(status_code=400,detail="Patient not found")
         return patient
     
-    def get_patients(self) -> List[PatientCreateSchema]:
+    def get_patients(self) -> List[PatientModel]:
         """Get patients."""
         patients = []
         for patient in self.get_patient_collection().find({}, {"_id": 0}) :
