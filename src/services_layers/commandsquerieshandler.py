@@ -3,8 +3,9 @@ import datetime
 from typing import Dict, List
 from src.adapters.mongoadapter import MongoDBAdapter
 from src.config import settings
+from src.domain.aggregats import PatientModel
 from src.domain.exceptions import PatientException
-from src.domain.schemas import PatientCreateSchema, PatientSchema
+from src.domain.schemas import PatientCreateSchema
 #from src.services_layers.eventshandler import
 from src.adapters.celery_app import app as celery_app
 from fastapi import HTTPException
@@ -53,9 +54,9 @@ class PatientQueryServiceHandler:
     """Patient Query Service"""
 
     @classmethod
-    def get_patient_by_id(cls, patient_id: str) -> PatientSchema:
+    def get_patient_by_id(cls, patient_id: str) -> PatientModel:
         return collection.get_patient_by_id(patient_id)
     
     @classmethod
-    def get_patients(cls) -> List[PatientSchema]:
+    def get_patients(cls) -> List[PatientModel]:
         return collection.get_patients()
