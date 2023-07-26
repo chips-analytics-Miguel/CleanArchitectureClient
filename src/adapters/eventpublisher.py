@@ -1,0 +1,1 @@
+# function publish (eventtype, data)

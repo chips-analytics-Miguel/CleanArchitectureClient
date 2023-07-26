@@ -1,8 +1,7 @@
 from datetime import date
 import datetime
 from typing import Dict, List
-from src.adapters.mongodb.mongoadapter import MongoDBAdapter
-from src.domain.aggregats import Patient
+from src.adapters.mongoadapter import MongoDBAdapter
 from src.config import settings
 from src.domain.exceptions import PatientException
 from src.domain.schemas import PatientCreateSchema, PatientSchema
