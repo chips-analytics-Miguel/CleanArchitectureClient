@@ -48,12 +48,25 @@ class MongoDBAdapter(AbstractRepository):
         )   # noqa: WPS122
         return self.get_patient_collection().find_one({"_id": ObjectId(id)}, {"_id": 0})
     
-    """def update_number(self,id:str, newphone: str)->PatientSchema:
-        Updates the patient's phone number.
+    def update_phone_number(self,id:str, newphone: str)->PatientModel:
+        """Updates the patient's phone number."""
         patient = self.get_patient_by_id(id)
         patient["phone_number"] = newphone
         result = self.update_patient(id,patient)
-        return result"""
+        return result
+    
+    def update_patient__birthdate(self, birth_date: date) -> PatientModel:
+        pass
+
+    def update_patient_active(self) -> PatientModel:
+        pass
+    
+    def update_patient_family_name(self, family_name: str) -> PatientModel:
+        pass
+    
+    def full_patient_update(self, id: str, patient: PatientCreateSchema) -> PatientModel:
+        pass
+    
 
     def del_patient(self, patient_id: str) -> str:
         """ Delete the patient."""
