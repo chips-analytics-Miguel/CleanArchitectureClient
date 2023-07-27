@@ -1,32 +1,43 @@
 from abc import ABC, abstractmethod
+import datetime
 from typing import List
-from src.domain.aggregats import Patient
-from src.domain.schemas import PatientCreateSchema, PatientSchema
-#from src.domain.entities import PatientModel
+from src.domain.model import PatientModel
+from src.domain.schemas import PatientCreateSchema
 
 
-class PatientInterface(ABC):
+class AbstractRepository(ABC):
 
     @abstractmethod
-    def save_patient(patient: PatientCreateSchema) -> str:
+    def save_patient(patient: PatientModel) -> str:
         pass
 
     @abstractmethod
-    def get_patient_by_id(self, patient_id: str) -> PatientSchema:
+    def get_patient_by_id(self, patient_id: str) -> PatientModel:
         pass
     
     @abstractmethod
-    def get_patients(self) -> List[PatientSchema]:
+    def get_patients(self) -> List[PatientModel]:
         pass
 
     @abstractmethod
-    def update_patient(self, id: str, phone_number: str) -> PatientSchema:
+    def full_patient_update(self, id: str, patient:PatientCreateSchema) -> PatientModel:
         pass
 
-    """@abstractmethod
-    def update_number(self, phone :str, newphone:str) -> PatientSchema:
-        pass"""
+    @abstractmethod
+    def update_phone_number(self, id :str, newphone:str) -> PatientModel:
+        pass
 
     @abstractmethod
-    def del_patient(self, patient_id: str) -> None:
+    def update_patient_family_name(self, family_name: str) -> PatientModel:
+        pass
+
+    @abstractmethod
+    def update_patient_active(self) -> PatientModel:
+        pass
+
+    def update_patient__birthdate(self, birth_date : datetime.date) -> PatientModel:
+        pass
+
+    @abstractmethod
+    def delete_patient(self, patient_id: str) -> str:
         pass

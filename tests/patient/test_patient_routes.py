@@ -1,65 +1,44 @@
 from fastapi.encoders import jsonable_encoder
 import unittest
-from src.domain.schemas import PatientSchema
+from src.domain.schemas import PatientCreateSchema
 import requests
 
 pat = {
-    "resourceType": "Patient",
-    "active":  True,
-    "name": [
-        {
-        "use": "OFFICIAL",
-        "family": "string",
-        "given": [
-            "string"
-        ]
-        }
-    ],
-    "telecom": [
-        {
-        "system": "PHONE",
-        "value": "string",
-        "use": "HOME"
-        }
-    ],
-    "gender": "MALE",
-    "birthDate": "2023-07-22T18:48:40.424Z",
-    "address": [
-        {
-        "use": "HOME",
-        "line": [
-            "string"
-        ],
-        "city": "string",
-        "district": "string",
-        "state": "string",
-        "postalCode": "string"
-        }
-    ]
+  "family_name": "string",
+  "given_name": [
+    "string"
+  ],
+  "phone_number": "string",
+  "gender": "string",
+  "birthdate": "2023-07-26"
 }
 
 class Patient_Test_routes(unittest.TestCase):
 
     def test_create_patient(self):
-        patient = PatientSchema(**pat)
+        patient = PatientCreateSchema(**pat)
         response = requests.post("http://localhost:5000/api/v1/patient/", json=jsonable_encoder(patient))
         self.assertEqual(response.status_code, 201)
         self.assertIn("patient_id", response.json())
 
-    def test_delete_patient(self):
-        patient_id = "64bd562c1056150a340ef2ce"
+    def test_delete_wrong_patient_id(self):
+        patient_id = "64c20cfbaf71d882a704a90b"
         response = requests.delete(f"http://localhost:5000/api/v1/patient/{patient_id}")
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
 
     def test_get_patients(self):
         response = requests.get("http://localhost:5000/api/v1/patient/")
         self.assertEqual(response.status_code, 200)
 
     def test_get_patient_by_id(self):
-        patient_id = "64bd599903f4180b01f64451"
+        patient_id = "64c14c315cd4506667f61b86"
         response = requests.get(f"http://localhost:5000/api/v1/patient/{patient_id}")
         self.assertEqual(response.status_code, 200)
-
+    
+    def test_get_patient_by_wrong_id(self):
+        patient_id ="64c20cfbaf71d882a704a90b"
+        response = requests.get(f"http://localhost:5000/api/v1/patient/{patient_id}")
+        self.assertEqual(response.status_code, 400)
 
 if __name__ == "__main__":
     unittest.main()

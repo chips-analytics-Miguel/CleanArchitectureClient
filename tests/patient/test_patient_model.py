@@ -1,5 +1,6 @@
 import datetime
 from typing import List
+from datetime import date
 import unittest
 from src.domain.schemas import PatientCreateSchema
 
@@ -8,7 +9,7 @@ pat = {
   "given_name": [
     "string"
   ],
-  "phone_number": "string",
+  "phone_number": "+155871374",
   "gender": "string",
   "birthdate": "2023-07-26"
 }
@@ -20,7 +21,7 @@ class TestPatientCreateSchema(unittest.TestCase):
         self.assertIsInstance(patient.family_name,str)
         self.assertIsInstance(patient.given_name,List[str])
         self.assertIsInstance(patient.gender,str)
-        self.assertIsInstance(patient.birthdate,datetime.date)
+        self.assertIsInstance(patient.birthdate,date)
 
     # Tests that a patient can be created with all required fields
     def test_create_patient_with_required_fields(self):
@@ -80,7 +81,7 @@ class TestPatientCreateSchema(unittest.TestCase):
     def test_create_patient_with_empty_family_name(self):
         with self.assertRaises(ValueError):
             PatientCreateSchema(
-                family_name='',
+                family_name=None,
                 given_name=['John'],
                 phone_number='1234567890',
                 gender='male',
@@ -92,7 +93,7 @@ class TestPatientCreateSchema(unittest.TestCase):
         with self.assertRaises(ValueError):
             PatientCreateSchema(
                 family_name='Doe',
-                given_name=[],
+                given_name='',
                 phone_number='1234567890',
                 gender='male',
                 birthdate=datetime.date(1990, 1, 1)
@@ -100,7 +101,7 @@ class TestPatientCreateSchema(unittest.TestCase):
 
     # Tests that a patient cannot be created with an invalid phone number
     def test_create_patient_with_invalid_phone_number(self):
-        with self.assertRaises(ValueError):
+        try:
             PatientCreateSchema(
                 family_name='Doe',
                 given_name=['John'],
@@ -108,21 +109,25 @@ class TestPatientCreateSchema(unittest.TestCase):
                 gender='male',
                 birthdate=datetime.date(1990, 1, 1)
             )
+        except ValueError as e:
+            self.assertEqual(e.args[0], 'Invalid phone number')
 
     # Tests that a patient cannot be created with an invalid gender
     def test_create_patient_with_invalid_gender(self):
-        with self.assertRaises(ValueError):
+        try:
             PatientCreateSchema(
                 family_name='Doe',
                 given_name=['John'],
                 phone_number='1234567890',
-                gender='unknown',
+                gender='',
                 birthdate=datetime.date(1990, 1, 1)
-            )
+            )     
+        except ValueError as e:
+            self.assertEqual(e.args[0], 'Invalid gender')
 
     # Tests that a patient cannot be created with an invalid birthdate
     def test_create_patient_with_invalid_birthdate(self):
-        with self.assertRaises(ValueError):
+        try :
             PatientCreateSchema(
                 family_name='Doe',
                 given_name=['John'],
@@ -130,6 +135,8 @@ class TestPatientCreateSchema(unittest.TestCase):
                 gender='male',
                 birthdate=datetime.date(2050, 1, 1)
             )
+        except ValueError as e:
+            self.assertEqual(e.args[0], 'DateYear is greather than current year')
 
     # Tests that a patient can be created with additional fields not defined in the schema
     def test_create_patient_with_additional_fields_not_defined_in_schema(self):

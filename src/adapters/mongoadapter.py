@@ -6,12 +6,12 @@ from fastapi import HTTPException
 from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.errors import PyMongoError
-from src.domain.aggregats import Patient
-from src.domain.schemas import PatientCreateSchema, PatientSchema
-from src.interfaces.abstractrepository import PatientInterface
+from src.domain.model import PatientModel
+from src.domain.schemas import PatientCreateSchema
+from src.interfaces.abstractrepository import AbstractRepository
 from src.config import settings
 
-class MongoDBAdapter(PatientInterface):
+class MongoDBAdapter(AbstractRepository):
     def __init__(self, mongo_uri: str):
         self.client = MongoClient(mongo_uri)
         self.db = self.client.get_database()
@@ -26,21 +26,21 @@ class MongoDBAdapter(PatientInterface):
         result = self.get_patient_collection().insert_one(patient)
         return str(result.inserted_id)
     
-    def get_patient_by_id(self, patient_id: str) -> PatientSchema:
+    def get_patient_by_id(self, patient_id: str) -> PatientCreateSchema:
         """Get patient by id."""
-        patient : PatientSchema = self.get_patient_collection().find_one({"_id": ObjectId(patient_id)}, {"_id": 0})
+        patient : PatientModel = self.get_patient_collection().find_one({"_id": ObjectId(patient_id)}, {"_id": 0})
         if not patient:
             raise HTTPException(status_code=400,detail="Patient not found")
         return patient
     
-    def get_patients(self) -> List[PatientSchema]:
+    def get_patients(self) -> List[PatientModel]:
         """Get patients."""
         patients = []
         for patient in self.get_patient_collection().find({}, {"_id": 0}) :
             patients.append(patient)
         return patients
     
-    def update_patient(self, id:str,patient:PatientSchema):
+    def update_patient(self, id:str,patient:PatientCreateSchema):
         """Updates the patient."""
         data = dict(patient)
         self.get_patient_collection().find_one_and_update(
@@ -48,14 +48,27 @@ class MongoDBAdapter(PatientInterface):
         )   # noqa: WPS122
         return self.get_patient_collection().find_one({"_id": ObjectId(id)}, {"_id": 0})
     
-    """def update_number(self,id:str, newphone: str)->PatientSchema:
-        Updates the patient's phone number.
+    def update_phone_number(self,id:str, newphone: str)->PatientModel:
+        """Updates the patient's phone number."""
         patient = self.get_patient_by_id(id)
         patient["phone_number"] = newphone
         result = self.update_patient(id,patient)
-        return result"""
+        return result
+    
+    def update_patient__birthdate(self, birth_date: date) -> PatientModel:
+        pass
 
-    def del_patient(self, patient_id: str) -> str:
+    def update_patient_active(self) -> PatientModel:
+        pass
+    
+    def update_patient_family_name(self, family_name: str) -> PatientModel:
+        pass
+    
+    def full_patient_update(self, id: str, patient: PatientCreateSchema) -> PatientModel:
+        pass
+    
+
+    def delete_patient(self, patient_id: str) -> str:
         """ Delete the patient."""
         patient = self.get_patient_collection().find_one({"_id": ObjectId(patient_id)})
         if patient:
