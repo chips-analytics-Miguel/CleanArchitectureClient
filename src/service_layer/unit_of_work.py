@@ -14,3 +14,4 @@ class MongoUnitOfWork(AbstractUnitOfWork):
 
     def collect_new_events(self):
         return []
+    
