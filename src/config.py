@@ -59,6 +59,7 @@ class Settings(CommonSettings, ServerSettings):
     API_VERSION: str = None
 
     MONGO_URI : str = "mongodb://localhost:27017/services"
+   
 
     MONGO_COLLECTION : str = "patients"
 
