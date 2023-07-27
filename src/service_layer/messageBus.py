@@ -18,6 +18,7 @@ class MessageBus:
 
     def handle(self, message: Message):
         self.queue = [message]
+        
         while self.queue:
             message = self.queue.pop(0)
             if isinstance(message, events.Event):
