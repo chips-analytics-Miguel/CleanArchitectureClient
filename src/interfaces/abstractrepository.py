@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import datetime
 from typing import List
-from src.domain.aggregats import PatientModel
+from src.domain.model import PatientModel
 from src.domain.schemas import PatientCreateSchema
 
 
@@ -39,5 +39,5 @@ class AbstractRepository(ABC):
         pass
 
     @abstractmethod
-    def del_patient(self, patient_id: str) -> str:
+    def delete_patient(self, patient_id: str) -> str:
         pass
