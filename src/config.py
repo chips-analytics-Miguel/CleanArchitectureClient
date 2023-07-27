@@ -37,6 +37,8 @@ class CommonSettings(BaseSettings):
 
     
 
+    
+
 
 class ServerSettings(BaseSettings):
     """Server settings."""
@@ -50,6 +52,7 @@ class ServerSettings(BaseSettings):
     # Enable uvicorn reloading
     SERVER_RELOAD: bool = True
 
+    TOPIC_NAME : str =  None
 
     API_VERSION="/api/v1/patient"
 
@@ -61,6 +64,8 @@ class Settings(CommonSettings, ServerSettings):
     MONGO_URI : str = "mongodb://localhost:27017/services"
 
     MONGO_COLLECTION : str = "patients"
+
+    
 
     API_VERSION="/api/v1/patient"
     class Config:
