@@ -4,8 +4,8 @@ from fastapi import APIRouter
 from src.config import settings
 from src.domain.aggregats import PatientModel
 from src.domain.schemas import PatientCreateSchema
-from src.services_layers.commandsquerieshandler import PatientCommandServiceHandler,PatientQueryServiceHandler
-#from src.interfaces.abstractrepository import PatientInterface
+from src.services_layers.queryhandler import Queryhandler
+from src.services_layers.commandhandler import Commandhandler
 from circuitbreaker import circuit, CircuitBreaker
 import pybreaker
 
@@ -42,12 +42,12 @@ def create_patient(patient:PatientCreateSchema)-> Dict[str, str]:
         }
     pat = PatientModel.parse_obj(json_obj)
     patient = pat.dict()
-    return PatientCommandServiceHandler().create_patient(patient)
+    return Commandhandler().create_patient(patient)
 
 @router.delete("/{patient_id}")
 @circuit(cls=CircuitBreaker)
 def delete_patient(patient_id: str)->Dict[str, str]:
-    return PatientCommandServiceHandler().delete_patient(patient_id)
+    return Commandhandler().delete_patient(patient_id)
 
 """@router.patch("/{phone_number}")
 @circuit(cls=CircuitBreaker)
@@ -63,9 +63,9 @@ def update_patient_by_id(patient_id: str, patient: PatientSchema)->PatientSchema
 @router.get("/",response_model=List[PatientModel])
 @circuit(cls=CircuitBreaker)
 def get_patients()->List[PatientModel]:
-    return PatientQueryServiceHandler.get_patients()
+    return Queryhandler.get_patients()
 
 @router.get("/{patient_id}",response_model=PatientModel)
 @circuit(cls=CircuitBreaker)
 def get_patient_By_Id(patient_id: str)->PatientModel:
-    return PatientQueryServiceHandler.get_patient_by_id(patient_id)
+    return Queryhandler.get_patient_by_id(patient_id)
