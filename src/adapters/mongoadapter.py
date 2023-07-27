@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.errors import PyMongoError
-from src.domain.aggregats import PatientModel
+from src.domain.model import PatientModel
 from src.domain.schemas import PatientCreateSchema
 from src.interfaces.abstractrepository import AbstractRepository
 from src.config import settings
@@ -68,7 +68,7 @@ class MongoDBAdapter(AbstractRepository):
         pass
     
 
-    def del_patient(self, patient_id: str) -> str:
+    def delete_patient(self, patient_id: str) -> str:
         """ Delete the patient."""
         patient = self.get_patient_collection().find_one({"_id": ObjectId(patient_id)})
         if patient:
