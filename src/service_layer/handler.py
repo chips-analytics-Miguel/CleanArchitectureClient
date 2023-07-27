@@ -4,8 +4,8 @@ from src.service_layer.unit_of_work import MongoUnitOfWork
 
 # Gestionnaire de commandes
 class PatientCommandHandler:
-    def __init__(self, uow):
-        self.uow = MongoUnitOfWork()
+    def __init__(self, uow:MongoUnitOfWork):
+        self.uow = uow
 
     def handle_create_patient(self, command: commands.CreatePatient):
         # # Vérifier si le patient existe déjà dans le système
