@@ -1,14 +1,15 @@
 from typing import List
 from src.domain import commands, events
+from src.service_layer.unit_of_work import MongoUnitOfWork
 
 # Gestionnaire de commandes
 class PatientCommandHandler:
     def __init__(self, uow):
-        self.uow = uow
+        self.uow = MongoUnitOfWork()
 
     def handle_create_patient(self, command: commands.CreatePatient):
         # Vérifier si le patient existe déjà dans le système
-        if self.uow.patient_repository.get_by_id(command.patient_id):
+        if self.uow.repository.get_by_id(command.patient_id):
             raise ValueError("Patient with the same ID already exists.")
 
         # Créer l'événement PatientCreated
