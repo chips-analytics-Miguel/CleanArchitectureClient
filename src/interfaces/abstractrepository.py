@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import datetime
 from typing import List
 from src.domain.aggregats import PatientModel
 from src.domain.schemas import PatientCreateSchema
@@ -19,12 +20,23 @@ class AbstractRepository(ABC):
         pass
 
     @abstractmethod
-    def update_patient(self, id: str, phone_number: str) -> PatientModel:
+    def full_patient_update(self, id: str, patient:PatientCreateSchema) -> PatientModel:
         pass
 
-    """@abstractmethod
-    def update_number(self, phone :str, newphone:str) -> PatientSchema:
-        pass"""
+    @abstractmethod
+    def update_phone_number(self, id :str, newphone:str) -> PatientModel:
+        pass
+
+    @abstractmethod
+    def update_patient_family_name(self, family_name: str) -> PatientModel:
+        pass
+
+    @abstractmethod
+    def update_patient_active(self) -> PatientModel:
+        pass
+
+    def update_patient__birthdate(self, birth_date : datetime.date) -> PatientModel:
+        pass
 
     @abstractmethod
     def del_patient(self, patient_id: str) -> str:
