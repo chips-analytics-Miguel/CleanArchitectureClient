@@ -1,8 +1,9 @@
 from typing import Callable, Dict, List, Type,Union
-from src.domain import commands, events
+from src.domain import commands
+from src.domain import  events
 from src.service_layer import unit_of_work
 
-Message = Union[commands.Command, events.Event]
+Message = Union[commands.Command ,events.Event]
 
 
 class MessageBus:
