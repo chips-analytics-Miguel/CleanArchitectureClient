@@ -2,11 +2,13 @@ from dataclasses import dataclass
 from typing import List
 from datetime import date
 
+from pydantic import BaseModel
+
 class Command:
     pass
 # Commande pour créer un nouveau patient
 @dataclass(frozen=True)
-class CreatePatient(Command):
+class CreatePatient(Command,BaseModel):
     family_name : str
     given_name : List[str]
     phone_number: str

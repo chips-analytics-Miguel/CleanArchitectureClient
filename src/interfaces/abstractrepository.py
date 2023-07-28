@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import datetime
 from typing import List
 from src.domain.model import PatientModel
-from src.domain.schemas import PatientCreateSchema
+from src.domain.commands import CreatePatient
 
 
 class AbstractRepository(ABC):
@@ -20,7 +20,7 @@ class AbstractRepository(ABC):
         pass
 
     @abstractmethod
-    def full_patient_update(self, id: str, patient:PatientCreateSchema) -> PatientModel:
+    def full_patient_update(self, id: str, patient:CreatePatient) -> PatientModel:
         pass
 
     @abstractmethod
