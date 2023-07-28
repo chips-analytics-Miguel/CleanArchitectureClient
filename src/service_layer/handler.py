@@ -36,6 +36,7 @@ class PatientCommandHandler:
         
         pat = PatientModel.parse_obj(json_obj)
         patient = pat.dict()
+        print("conversion du patient en dictionnaire")
         if 'birthDate' in patient:
             birth_date = patient['birthDate']
             if isinstance(birth_date, date):

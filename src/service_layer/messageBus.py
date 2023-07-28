@@ -41,8 +41,10 @@ class MessageBus:
     def handle_command(self, command: commands.Command):
         try:
             handler = self.command_handlers[type(command)]
-            handler(command)
+            result =handler(command) 
             self.queue.extend(self.uow.collect_new_events())
+            return result
         except Exception:
             # Gérer les exceptions et les erreurs ici
             raise
+   

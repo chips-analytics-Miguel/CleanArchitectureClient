@@ -7,7 +7,7 @@ from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.errors import PyMongoError
 from src.domain.model import PatientModel
-from src.domain.schemas import PatientCreateSchema
+from src.domain.commands import  CreatePatient
 from src.interfaces.abstractrepository import AbstractRepository
 from src.config import settings
 
@@ -26,7 +26,7 @@ class MongoDBAdapter(AbstractRepository):
         result = self.get_patient_collection().insert_one(patient)
         return str(result.inserted_id)
     
-    def get_patient_by_id(self, patient_id: str) -> PatientCreateSchema:
+    def get_patient_by_id(self, patient_id: str) -> CreatePatient:
         """Get patient by id."""
         patient : PatientModel = self.get_patient_collection().find_one({"_id": ObjectId(patient_id)}, {"_id": 0})
         if not patient:
@@ -40,7 +40,7 @@ class MongoDBAdapter(AbstractRepository):
             patients.append(patient)
         return patients
     
-    def update_patient(self, id:str,patient:PatientCreateSchema):
+    def update_patient(self, id:str,patient:CreatePatient):
         """Updates the patient."""
         data = dict(patient)
         self.get_patient_collection().find_one_and_update(
@@ -64,7 +64,7 @@ class MongoDBAdapter(AbstractRepository):
     def update_patient_family_name(self, family_name: str) -> PatientModel:
         pass
     
-    def full_patient_update(self, id: str, patient: PatientCreateSchema) -> PatientModel:
+    def full_patient_update(self, id: str, patient: CreatePatient) -> PatientModel:
         pass
     
 

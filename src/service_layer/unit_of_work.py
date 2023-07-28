@@ -8,8 +8,9 @@ class MongoUnitOfWork(AbstractUnitOfWork):
         self.new_events = []
        
 
-    def commit(self):
-        self.repository.commit()
+    def commit(self,patient):
+        return self.repository.save_patient(patient)
+       
 
     def rollback(self):
         self.repository.rollback()
