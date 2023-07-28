@@ -13,7 +13,7 @@ class PatientCommandHandler:
         #     raise ValueError("Patient with the same ID already exists.")
 
         # Créer l'événement PatientCreated
-        patient_created_event = events.PatientCreatedEvent(
+        patient_created_event = events.PatientCreated(
             family_name=command.family_name,
             given_name=command.given_name,
             phone_number=command.phone_number,
@@ -46,7 +46,7 @@ class PatientCommandHandler:
         )
 
         # Publier l'événement PatientUpdated
-        self.uow.event_publisher.publish(patient_updated_event)
+        # self.uow.event_publisher.publish(patient_updated_event)
 
     def handle_delete_patient(self, command: commands.DeletePatient):
        
@@ -56,23 +56,16 @@ class PatientCommandHandler:
         # Créer l'événement PatientDeleted
         patient_deleted_event = events.PatientDeletedEvent(patient_id=command.patient_id)
 
-        # Publier l'événement PatientDeleted
-        
-        # self.uow.event_publisher.publish(patient_deleted_event)
 
-# Gestionnaire d'événements
+
 class PatientEventHandler:
-    def __init__(self, uow):
+    def __init__(self, uow:MongoUnitOfWork):
         self.uow = uow
 
-    def handle_patient_created(self, event: events.PatientCreatedEvent):
-        # Enregistrer le nouveau patient dans la base de données
-        patient = Patient(
-            id=event.patient_id,
-            family_name=event.family_name,
-            given_name=event.given_name,
-            phone_number=event.phone_number,
-            gender=event.gender,
-            birthdate=event.birthdate,
-        )
-        self.uow.patient_repository.add(patient)
+    def handle_patient_created(self, Event: events.PatientCreated):
+       
+        pass
+    def handle_delete_patient(self, Event: events.PatientDeleted):
+       
+        pass
+    

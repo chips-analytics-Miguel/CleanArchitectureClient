@@ -3,6 +3,7 @@ from typing import Dict, List
 from fastapi import APIRouter
 from src.domain.commands import CreatePatient, UpdatePatientDetails, DeletePatient
 from src.service_layer.messageBus import MessageBus
+from src.domain.events import PatientCreated ,PatientDeleted
 from src.service_layer.unit_of_work import MongoUnitOfWork
 from src.config import settings
 from src.domain.model import PatientModel
@@ -10,6 +11,8 @@ from src.domain.schemas import PatientCreateSchema
 from src.service_layer.queryhandler import Queryhandler
 from src.service_layer.commandhandler import Commandhandler
 from circuitbreaker import circuit, CircuitBreaker
+from src.service_layer.handler import PatientCommandHandler ,PatientEventHandler
+
 import pybreaker
 
 breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=60)
@@ -47,8 +50,28 @@ router = APIRouter(prefix="/api/v1/patient")
 #     patient = pat.dict()
 #     return Commandhandler().create_patient(patient)
 
-# Initialize the MessageBus with the Unit of Work
-message_bus = MessageBus(uow=MongoUnitOfWork)
+ #initialized the unity_of_work
+uow = MongoUnitOfWork()
+
+# Create instances of CommandHandler and EventHandler
+command_handler = PatientCommandHandler(uow=uow)
+event_handler = PatientEventHandler(uow=uow)
+
+event_handlers = {
+    PatientCreated: [event_handler.handle_patient_created],
+    PatientDeleted:[event_handler.handle_delete_patient]
+    
+}
+
+command_handlers = {
+    CreatePatient: command_handler.handle_create_patient,
+    UpdatePatientDetails: command_handler.handle_update_patient_details,
+    DeletePatient: command_handler.handle_delete_patient,
+}
+
+
+# Initialize the MessageBus with the Unit of Work and handlers
+message_bus = MessageBus(uow=MongoUnitOfWork, event_handlers=event_handlers, command_handlers=command_handlers)
 
 # Command handlers
 @router.post("/", status_code=201)
