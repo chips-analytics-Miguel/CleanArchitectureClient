@@ -5,6 +5,7 @@ from src.domain.commands import CreatePatient, UpdatePatientDetails, DeletePatie
 from src.service_layer.messageBus import MessageBus
 from src.domain.events import PatientCreated ,PatientDeleted
 from src.service_layer.unit_of_work import MongoUnitOfWork
+from src.interfaces.abstract_unit_of_work import AbstractUnitOfWork
 from src.config import settings
 from src.domain.model import PatientModel
 from src.domain.schemas import PatientCreateSchema
@@ -51,7 +52,7 @@ router = APIRouter(prefix="/api/v1/patient")
 #     return Commandhandler().create_patient(patient)
 
  #initialized the unity_of_work
-uow = MongoUnitOfWork()
+uow =  AbstractUnitOfWork = MongoUnitOfWork()
 
 # Create instances of CommandHandler and EventHandler
 command_handler = PatientCommandHandler(uow=uow)
@@ -71,9 +72,9 @@ command_handlers = {
 
 
 # Initialize the MessageBus with the Unit of Work and handlers
-message_bus = MessageBus(uow=MongoUnitOfWork, event_handlers=event_handlers, command_handlers=command_handlers)
+message_bus = MessageBus(uow, event_handlers=event_handlers, command_handlers=command_handlers)
 
-# Command handlers
+# # Command handlers
 @router.post("/", status_code=201)
 def create_patient(patient: PatientCreateSchema) -> Dict[str, str]:
     # Your existing code to create the patient command
@@ -90,7 +91,7 @@ def create_patient(patient: PatientCreateSchema) -> Dict[str, str]:
     )
 
     # Instead of directly calling the Commandhandler, use the MessageBus
-    message_bus.handle(create_patient_command)
+    return message_bus.handle(create_patient_command)
 
 
 @router.delete("/{patient_id}")
