@@ -3,14 +3,14 @@ from typing import Dict
 from src.domain.commands import CreatePatient, UpdatePatientDetails, DeletePatient
 from src.domain.events import PatientCreated ,PatientDeleted
 from src.domain import commands, events
-from src.service_layer.unit_of_work import MongoUnitOfWork
+from src.service_layer.unit_of_work import MongoRedisUnitOfWork
 from src.domain.model import PatientModel
 
 from datetime import date
 
 # Gestionnaire de commandes
 class PatientCommandHandler:
-    def __init__(self, uow:MongoUnitOfWork):
+    def __init__(self, uow: MongoRedisUnitOfWork):
         self.uow = uow
         
 
@@ -55,7 +55,7 @@ class PatientCommandHandler:
 
         # Publier l'événement PatientCreated
         # self.uow.event_publisher.publish(patient_created_event)
-        result = self.uow.repository.save_patient(patient)
+        result = self.uow.add_patient(patient)
         print("handle_create_patient",result)
         return result
            
@@ -94,7 +94,7 @@ class PatientCommandHandler:
 
 
 class PatientEventHandler:
-    def __init__(self, uow:MongoUnitOfWork):
+    def __init__(self, uow:MongoRedisUnitOfWork):
         self.uow = uow
 
     def handle_patient_created(self, Event: events.PatientCreated):
@@ -107,7 +107,7 @@ class PatientEventHandler:
   
 #Initialisation du unity of work
 
-uow=MongoUnitOfWork()   
+uow=MongoRedisUnitOfWork()   
 
 # Create instances of CommandHandler and EventHandler
 command_handler = PatientCommandHandler(uow=uow)

@@ -1,7 +1,7 @@
 from typing import Callable, Dict, List, Type,Union
 from src.domain import commands
 from src.domain import  events
-from src.service_layer.unit_of_work import MongoUnitOfWork
+from src.service_layer.unit_of_work import MongoRedisUnitOfWork
 
 Message = Union[commands.Command ,events.Event]
 
@@ -9,7 +9,7 @@ Message = Union[commands.Command ,events.Event]
 class MessageBus:
     def __init__(
         self,
-        uow: MongoUnitOfWork,
+        uow: MongoRedisUnitOfWork,
         event_handlers: Dict[Type[events.Event], List[Callable]],
         command_handlers: Dict[Type[commands.Command], Callable],
     ):

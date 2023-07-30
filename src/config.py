@@ -43,10 +43,11 @@ class CommonSettings(BaseSettings):
 class ServerSettings(BaseSettings):
     """Server settings."""
 
-    # Host
+    # Host app 
     SERVER_HOST: str = "127.0.0.1"
-    # Port
+    # app Port
     SERVER_PORT: int = 5000
+  
     # quantity of workers for uvicorn
     SERVER_WORKERS_COUNT: int = 1
     # Enable uvicorn reloading
@@ -60,7 +61,12 @@ class ServerSettings(BaseSettings):
 class Settings(CommonSettings, ServerSettings):
     """Application settings."""
     API_VERSION: str = None
-
+    #REDIS CONFIGURATION
+    #Host app 
+    REDIS_HOST : str = None
+    #Redis port
+    REDIS_PORT : str = None
+    #MONGODB CONFIGURATION
     MONGO_URI : str = None
    
     MONGO_COLLECTION : str = None

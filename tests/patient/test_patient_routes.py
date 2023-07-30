@@ -1,6 +1,6 @@
 from fastapi.encoders import jsonable_encoder
 import unittest
-from src.domain.schemas import PatientCreateSchema
+from src.domain.commands import CreatePatient
 import requests
 
 pat = {
@@ -16,7 +16,7 @@ pat = {
 class Patient_Test_routes(unittest.TestCase):
 
     def test_create_patient(self):
-        patient = PatientCreateSchema(**pat)
+        patient = CreatePatient(**pat)
         response = requests.post("http://localhost:5000/api/v1/patient/", json=jsonable_encoder(patient))
         self.assertEqual(response.status_code, 201)
         self.assertIn("patient_id", response.json())

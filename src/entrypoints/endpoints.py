@@ -7,9 +7,7 @@ from src.domain.commands import CreatePatient
 from src.domain.model import PatientModel
 from circuitbreaker import circuit, CircuitBreaker
 from src.service_layer.handler import PatientCommandHandler ,PatientEventHandler
-
 import pybreaker
-
 breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=60)
 class Circuitbreaker(CircuitBreaker):
         FAILURE_THRESHOLD = 5
@@ -17,9 +15,6 @@ class Circuitbreaker(CircuitBreaker):
         EXPECTED_EXCEPTION = Exception
 
 router = APIRouter(prefix="/api/v1/patient")
-
-
-
 
 # Initialize the MessageBus with the Unit of Work and handlers
 message_bus = MessageBus(uow, event_handlers=event_handlers, command_handlers=command_handlers)
