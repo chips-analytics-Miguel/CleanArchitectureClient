@@ -9,7 +9,9 @@ class MongoUnitOfWork(AbstractUnitOfWork):
        
 
     def commit(self,patient):
-        return self.repository.save_patient(patient)
+        result =self.repository.save_patient(patient)
+        print("commit ", result)
+        return result
        
 
     def rollback(self):

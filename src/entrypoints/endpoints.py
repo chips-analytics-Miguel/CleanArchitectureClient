@@ -88,16 +88,18 @@ def create_patient(patient: CreatePatient) -> Dict[str, str]:
     )
 
     # Instead of directly calling the Commandhandler, use the MessageBus
+    result=message_bus.handle(create_patient_command)
+    print( "endpoint",result)
     return message_bus.handle(create_patient_command)
     # return message_bus.test_func()
     
     
 
 
-@router.delete("/{patient_id}")
-@circuit(cls=CircuitBreaker)
-def delete_patient(patient_id: str)->Dict[str, str]:
-    return Commandhandler().delete_patient(patient_id)
+# @router.delete("/{patient_id}")
+# @circuit(cls=CircuitBreaker)
+# def delete_patient(patient_id: str)->Dict[str, str]:
+#     return Commandhandler().delete_patient(patient_id)
 
 """@router.patch("/{phone_number}")
 @circuit(cls=CircuitBreaker)
@@ -109,11 +111,11 @@ def update_patient_by_id(patient_id: str, patient: PatientSchema)->PatientSchema
     return PatientCommandServiceHandler.update_patient(id=patient_id, patient=patient)
 """
 
-# Queries handlers
-@router.get("/",response_model=List[PatientModel])
-@circuit(cls=CircuitBreaker)
-def get_patients()->List[PatientModel]:
-    return Queryhandler.get_patients()
+# # Queries handlers
+# @router.get("/",response_model=List[PatientModel])
+# @circuit(cls=CircuitBreaker)
+# def get_patients()->List[PatientModel]:
+#     return Queryhandler.get_patients()
 
 @router.get("/{patient_id}",response_model=PatientModel)
 @circuit(cls=CircuitBreaker)

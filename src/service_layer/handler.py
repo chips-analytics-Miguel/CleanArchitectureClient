@@ -53,7 +53,9 @@ class PatientCommandHandler:
 
         # Publier l'événement PatientCreated
         # self.uow.event_publisher.publish(patient_created_event)
-        return self.uow.repository.save_patient(patient)
+        result = self.uow.repository.save_patient(patient)
+        print("handle_create_patient",result)
+        return result
            
        
 
