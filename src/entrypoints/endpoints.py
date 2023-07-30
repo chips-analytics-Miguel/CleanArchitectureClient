@@ -2,12 +2,9 @@ from typing import Dict, List
 from fastapi import APIRouter
 from src.domain.commands import CreatePatient, UpdatePatientDetails, DeletePatient
 from src.service_layer.messageBus import MessageBus
-from src.domain.events import PatientCreated ,PatientDeleted
-from src.service_layer.unit_of_work import MongoUnitOfWork
+from src.service_layer.handler import uow, event_handlers ,command_handlers
 from src.domain.commands import CreatePatient
 from src.domain.model import PatientModel
-# from src.service_layer.queryhandler import Queryhandler
-# from src.service_layer.commandhandler import Commandhandler
 from circuitbreaker import circuit, CircuitBreaker
 from src.service_layer.handler import PatientCommandHandler ,PatientEventHandler
 
@@ -21,64 +18,20 @@ class Circuitbreaker(CircuitBreaker):
 
 router = APIRouter(prefix="/api/v1/patient")
 
-# #command handlers
-# @router.post("/", status_code=201)
-# @circuit(cls=CircuitBreaker)
-# def create_patient(patient:PatientCreateSchema)-> Dict[str, str]:
-#     patient_dict=patient.dict()
-#     json_obj = {
-#         "active": True,
-#         "name": [
-#             {
-#                 "family": patient_dict['family_name'],
-#                 "given" : patient_dict["given_name"],
-#                 "text": patient_dict['family_name'] +' '+ " ".join(patient_dict["given_name"]),
-#             }],
-#         "gender":patient_dict["gender"],
-#         "telecom": [
-#             {
-#             "system": "phone",
-#             "use": "mobile",
-#             "value": patient_dict["phone_number"]
-#             }
-#         ],
-#         "birthDate": patient_dict["birthdate"]
-#         }
-#     pat = PatientModel.parse_obj(json_obj)
-#     patient = pat.dict()
-#     return Commandhandler().create_patient(patient)
 
- #initialized the unity_of_work
-uow = MongoUnitOfWork()
-
-# Create instances of CommandHandler and EventHandler
-command_handler = PatientCommandHandler(uow=uow)
-event_handler = PatientEventHandler(uow=uow)
-
-event_handlers = {
-    PatientCreated: [event_handler.handle_patient_created],
-    PatientDeleted:[event_handler.handle_delete_patient]
-    
-}
-
-command_handlers = {
-    CreatePatient: command_handler.handle_create_patient,
-    UpdatePatientDetails: command_handler.handle_update_patient_details,
-    DeletePatient: command_handler.handle_delete_patient,
-}
 
 
 # Initialize the MessageBus with the Unit of Work and handlers
 message_bus = MessageBus(uow, event_handlers=event_handlers, command_handlers=command_handlers)
 
-# # Command handlers
+
 @router.post("/", status_code=201)
+@circuit(cls=CircuitBreaker)
 def create_patient(patient: CreatePatient) -> Dict[str, str]:
-    # Your existing code to create the patient command
+   
     patient_dict = patient.dict()
-    # ...
-    
-    # Create an instance of CreatePatient command
+
+  
     create_patient_command = CreatePatient(
         family_name=patient_dict['family_name'],
         given_name=patient_dict["given_name"],
@@ -87,7 +40,7 @@ def create_patient(patient: CreatePatient) -> Dict[str, str]:
         birthdate=patient_dict["birthdate"]
     )
 
-    # Instead of directly calling the Commandhandler, use the MessageBus
+  
     result=message_bus.handle(create_patient_command)
     return {"patient_id":result}
   
@@ -115,7 +68,7 @@ def update_patient_by_id(patient_id: str, patient: PatientSchema)->PatientSchema
 # def get_patients()->List[PatientModel]:
 #     return Queryhandler.get_patients()
 
-@router.get("/{patient_id}",response_model=PatientModel)
-@circuit(cls=CircuitBreaker)
-def get_patient_By_Id(patient_id: str)->PatientModel:
-    return Queryhandler.get_patient_by_id(patient_id)
+# @router.get("/{patient_id}",response_model=PatientModel)
+# @circuit(cls=CircuitBreaker)
+# def get_patient_By_Id(patient_id: str)->PatientModel:
+#     return Queryhandler.get_patient_by_id(patient_id)

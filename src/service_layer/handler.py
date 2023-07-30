@@ -1,5 +1,7 @@
 import datetime
-from typing import Dict, List
+from typing import Dict
+from src.domain.commands import CreatePatient, UpdatePatientDetails, DeletePatient
+from src.domain.events import PatientCreated ,PatientDeleted
 from src.domain import commands, events
 from src.service_layer.unit_of_work import MongoUnitOfWork
 from src.domain.model import PatientModel
@@ -101,4 +103,24 @@ class PatientEventHandler:
     def handle_delete_patient(self, Event: events.PatientDeleted):
        
         pass
+   
+   
+#Initialisation du unity of work
+
+uow=MongoUnitOfWork()   
+
+# Create instances of CommandHandler and EventHandler
+command_handler = PatientCommandHandler(uow=uow)
+event_handler = PatientEventHandler(uow=uow)
+
+event_handlers = {
+    PatientCreated: [event_handler.handle_patient_created],
+    PatientDeleted:[event_handler.handle_delete_patient]
+}
+
+command_handlers = {
+    CreatePatient: command_handler.handle_create_patient,
+    UpdatePatientDetails: command_handler.handle_update_patient_details,
+    DeletePatient: command_handler.handle_delete_patient,
+}
     
