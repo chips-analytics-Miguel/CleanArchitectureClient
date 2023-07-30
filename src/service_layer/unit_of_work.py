@@ -10,7 +10,7 @@ class MongoUnitOfWork(AbstractUnitOfWork):
 
     def commit(self,patient):
         result =self.repository.save_patient(patient)
-        print("commit ", result)
+       
         return result
        
 

@@ -89,10 +89,8 @@ def create_patient(patient: CreatePatient) -> Dict[str, str]:
 
     # Instead of directly calling the Commandhandler, use the MessageBus
     result=message_bus.handle(create_patient_command)
-    print( "endpoint",result)
-    return message_bus.handle(create_patient_command)
-    # return message_bus.test_func()
-    
+    return {"patient_id":result}
+  
     
 
 
