@@ -23,6 +23,23 @@ class UpdatePatientDetails(Command):
     age: int
     address: str
 
+@dataclass(frozen=True)
+class UpdateHumanNamePatient(Command):
+    family_name : str
+    given_name : List[str]
+
+#Commande pour ajouter un contact à un patient
+@dataclass(frozen=True)
+class Contact(Command):
+    patient_id:str
+    relationship_system: str
+    relationship_code: str
+    family: str
+    given: List[str]
+    telecom_system: str
+    telecom_value: str
+    phone_number:str
+
 # Commande pour supprimer un patient
 @dataclass(frozen=True)
 class DeletePatient(Command):

@@ -104,7 +104,7 @@ class PatientEventHandler:
        
         pass
    
-   
+  
 #Initialisation du unity of work
 
 uow=MongoUnitOfWork()   
