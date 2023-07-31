@@ -21,11 +21,9 @@ project_folder/
 │   │   └── redisRepository.py 
 │   ├── entry_point/
 │   │   ├── __init__.py
-│   │   ├── router.py
-│   │   └── api/
+│   │   └── entry_point/
 │   │       ├── __init__.py
-│   │       └── # Place your API code here
-│   │
+│   │       └──endpoints.py
 │   ├── interfaces/
 │   │   ├── __init__.py
 │   │   ├── abstractrepository.py
