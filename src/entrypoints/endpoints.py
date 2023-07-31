@@ -6,8 +6,6 @@ from src.domain.events import PatientCreated ,PatientDeleted
 from src.service_layer.unit_of_work import MongoUnitOfWork
 from src.domain.commands import CreatePatient
 from src.domain.model import PatientModel
-# from src.service_layer.queryhandler import Queryhandler
-# from src.service_layer.commandhandler import Commandhandler
 from circuitbreaker import circuit, CircuitBreaker
 from src.service_layer.handler import PatientCommandHandler ,PatientEventHandler
 
@@ -89,7 +87,7 @@ def create_patient(patient: CreatePatient) -> Dict[str, str]:
 
     # Instead of directly calling the Commandhandler, use the MessageBus
     return message_bus.handle(create_patient_command)
-    # return message_bus.test_func()
+  
     
     
 
