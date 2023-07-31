@@ -6,9 +6,8 @@ class RedisAdapter:
 
     def add_patient(self, patient:dict):
         # Ajouter un patient dans Redis en utilisant une clé basée sur l'ID du patient
-        patient_id=patient["phone_number"]
-        key = f"{patient_id}"
-       
+        patient_id = "opentelemetricID"
+        key = f"patient:{patient_id}"
         self.redis_client.hmset(key, patient)
 
     def get_patient(self, patient_id):

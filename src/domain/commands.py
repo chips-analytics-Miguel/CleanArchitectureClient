@@ -11,9 +11,10 @@ class Command:
 class CreatePatient(Command,BaseModel):
     family_name : str
     given_name : List[str]
-    phone_number: str
-    gender: str
-    birthdate: date
+    phone_number : str
+    active : bool
+    gender : str
+    birthdate : date
 
 # Commande pour mettre à jour les détails d'un patient
 @dataclass(frozen=True)

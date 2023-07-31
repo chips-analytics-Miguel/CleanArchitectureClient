@@ -1,12 +1,13 @@
 from typing import Dict, List
 from fastapi import APIRouter
-from src.domain.commands import CreatePatient, UpdatePatientDetails, DeletePatient
+from src.domain.commands import CreatePatient
+from src.domain.queries import GetPatientDetails
 from src.service_layer.messageBus import MessageBus
-from src.service_layer.handler import uow, event_handlers ,command_handlers
+from src.service_layer.handler import uow, event_handlers ,command_handlers ,querie_handlers
 from src.domain.commands import CreatePatient
 from src.domain.model import PatientModel
 from circuitbreaker import circuit, CircuitBreaker
-from src.service_layer.handler import PatientCommandHandler ,PatientEventHandler
+
 import pybreaker
 breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=60)
 class Circuitbreaker(CircuitBreaker):
@@ -17,7 +18,7 @@ class Circuitbreaker(CircuitBreaker):
 router = APIRouter(prefix="/api/v1/patient")
 
 # Initialize the MessageBus with the Unit of Work and handlers
-message_bus = MessageBus(uow, event_handlers=event_handlers, command_handlers=command_handlers)
+message_bus = MessageBus(uow, event_handlers=event_handlers, command_handlers=command_handlers , querie_handlers=querie_handlers)
 
 
 @router.post("/", status_code=201)
@@ -28,12 +29,13 @@ def create_patient(patient: CreatePatient) -> Dict[str, str]:
 
   
     create_patient_command = CreatePatient(
+        active=patient_dict['active'],
         family_name=patient_dict['family_name'],
         given_name=patient_dict["given_name"],
         phone_number=patient_dict["phone_number"],
         gender=patient_dict["gender"],
-        birthdate=patient_dict["birthdate"]
-    )
+        birthdate=patient_dict["birthdate"], 
+        )
 
   
     result=message_bus.handle(create_patient_command)
@@ -63,7 +65,9 @@ def update_patient_by_id(patient_id: str, patient: PatientSchema)->PatientSchema
 # def get_patients()->List[PatientModel]:
 #     return Queryhandler.get_patients()
 
-# @router.get("/{patient_id}",response_model=PatientModel)
-# @circuit(cls=CircuitBreaker)
-# def get_patient_By_Id(patient_id: str)->PatientModel:
-#     return Queryhandler.get_patient_by_id(patient_id)
+@router.get("/{patient_id}", response_model=PatientModel)
+@circuit(cls=CircuitBreaker)
+def get_patient_by_id(patient_id: str):  # Utilisez str pour les paramètres de chemin
+    get_patient_details = GetPatientDetails(patient_id)
+    result=message_bus.handle(get_patient_details)
+    return result

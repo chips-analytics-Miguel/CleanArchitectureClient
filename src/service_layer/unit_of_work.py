@@ -10,7 +10,6 @@ class MongoRedisUnitOfWork(AbstractUnitOfWork):
         self.mongo_repository = MongoDBAdapter(mongo_uri=settings.MONGO_URI)
         self.redis_repository = RedisAdapter(redis_host=settings.REDIS_HOST, redis_port=settings.REDIS_PORT)
         self.new_events = []
-
     def commit(self):
         # Sauvegarder les modifications dans MongoDB
         self.mongo_repository.commit()
@@ -51,8 +50,9 @@ class MongoRedisUnitOfWork(AbstractUnitOfWork):
         # Opération de lecture : Chercher d'abord dans Redis
         patient_redis = self.redis_repository.get_patient(patient_id)
         if patient_redis:
+            
             return patient_redis
-
+        print("Patient non trouvé dans la sauvegrade de redis")
         # S'il n'est pas trouvé dans Redis, chercher dans MongoDB
         patient_mongo = self.mongo_repository.get_patient_by_id(patient_id)
         if patient_mongo:
