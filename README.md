@@ -35,13 +35,16 @@ project_folder/
 │   │
 │   ├── service_layer/
 │   │   ├── __init__.py
-│   │   └── patient_service.py
+│   │   └── handler.py
+│   │   └── unity_of_work.py
+│   │   └── messageBus.py
 │   │
 │   ├── domain/
-│   │   ├── events/
-│   │   │   ├── __init__.py
-│   │   │   ├── patient_event.py
-│   │   │   # Place your domain events code here
+│   │   ├── __init__.py
+│   │   ├── events.py
+│   │   ├── commands.pyt
+│   │   ├── queries.py
+
 │   │   │
 │   │   ├── model/
 │   │   │   ├── aggregate/
