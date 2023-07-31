@@ -45,7 +45,7 @@ class MongoDBAdapter(AbstractRepository):
         data = dict(patient)
         self.get_patient_collection().find_one_and_update(
             {"_id": ObjectId(id)}, {"$set": data},
-        )   # noqa: WPS122
+        )   
         return self.get_patient_collection().find_one({"_id": ObjectId(id)}, {"_id": 0})
     
     def update_phone_number(self,id:str, newphone: str)->PatientModel:

@@ -1,22 +1,27 @@
 import datetime
-from typing import Dict, List
-from src.domain import commands, events
-from src.service_layer.unit_of_work import MongoUnitOfWork
+from typing import Dict
+from src.domain.events import *
+from src.domain.commands import *
+from src.domain.queries import *
+from src.service_layer.unit_of_work import MongoRedisUnitOfWork
 from src.domain.model import PatientModel
 
 from datetime import date
 
+
+
+          
 # Gestionnaire de commandes
 class PatientCommandHandler:
-    def __init__(self, uow:MongoUnitOfWork):
+    def __init__(self, uow: MongoRedisUnitOfWork):
         self.uow = uow
         
 
-    def handle_create_patient(self, command: commands.CreatePatient)->Dict[str,str]:
+    def handle_create_patient(self, command:CreatePatient)->Dict[str,str]:
         
         patient_create_dict=command.dict()
         json_obj = {
-        "active": True,
+        "active": patient_create_dict['active'],
         "name": [
             {
                 "family": patient_create_dict['family_name'],
@@ -53,11 +58,13 @@ class PatientCommandHandler:
 
         # Publier l'événement PatientCreated
         # self.uow.event_publisher.publish(patient_created_event)
-        return self.uow.repository.save_patient(patient)
+        result = self.uow.add_patient(patient)
+        print("handle_create_patient",result)
+        return result
            
        
 
-    def handle_update_patient_details(self, command: commands.UpdatePatientDetails):
+    def handle_update_patient_details(self, command: UpdatePatientDetails):
         # Vérifier si le patient existe dans le système
         patient = self.uow.repository.get_patient_by_id(command.patient_id)
         if not patient:
@@ -67,7 +74,7 @@ class PatientCommandHandler:
         self.uow.update_patient(command.patient_id, command)
 
         # Créer l'événement PatientUpdated
-        patient_updated_event = events.PatientUpdatedEvent(
+        patient_updated_event = PatientUpdated(
             patient_id=command.patient_id,
             family_name=command.family_name,
             given_name=command.given_name,
@@ -79,24 +86,52 @@ class PatientCommandHandler:
         # Publier l'événement PatientUpdated
         # self.uow.event_publisher.publish(patient_updated_event)
 
-    def handle_delete_patient(self, command: commands.DeletePatient):
+    def handle_delete_patient(self, command: DeletePatient):
        
         # Supprimer le patient
         self.uow.repository.delete_patient(command)
 
         # Créer l'événement PatientDeleted
-        patient_deleted_event = events.PatientDeletedEvent(patient_id=command.patient_id)
-
+        patient_deleted_event = PatientDeleted(patient_id=command.patient_id)
+class PatientQuerieHandler:
+    def __init__(self, uow:MongoRedisUnitOfWork):
+        self.uow=uow
+        
+    def handle_get_patient_by_id(self,querie:GetPatientDetails):
+        patient = self.uow.get_patient(querie.patient_id)
+        print("handle_get_patient_by_patient",patient)
+        return patient
 
 
 class PatientEventHandler:
-    def __init__(self, uow:MongoUnitOfWork):
+    def __init__(self, uow:MongoRedisUnitOfWork):
         self.uow = uow
 
-    def handle_patient_created(self, Event: events.PatientCreated):
+    def handle_patient_created(self, Event: PatientCreated):
        
         pass
-    def handle_delete_patient(self, Event: events.PatientDeleted):
+    def handle_delete_patient(self, Event: PatientDeleted):
        
         pass
-    
+   
+  
+#Initialisation du unity of work
+
+uow=MongoRedisUnitOfWork()   
+
+# Create instances of CommandHandler and EventHandler
+command_handler = PatientCommandHandler(uow=uow)
+event_handler = PatientEventHandler(uow=uow)
+querie_handler = PatientQuerieHandler(uow=uow)
+event_handlers = {
+    PatientCreated: [event_handler.handle_patient_created],
+    PatientDeleted:[event_handler.handle_delete_patient]
+}
+command_handlers = {
+    CreatePatient: command_handler.handle_create_patient,
+    UpdatePatientDetails: command_handler.handle_update_patient_details,
+    DeletePatient: command_handler.handle_delete_patient,
+}
+querie_handlers = {
+    GetPatientDetails : querie_handler.handle_get_patient_by_id
+}   
