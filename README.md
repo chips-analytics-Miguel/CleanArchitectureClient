@@ -10,33 +10,82 @@ A sample microservice project using FastAPI. This project leverages Docker for c
 #interface(absractpublisher, abastractrepo, abastractuniofwork(abstractrepo)))
 #adapters(kafka et mongodb) test e2e, integration
 #sl(unitofwork,)
-#tester en cas d'echec et de reussite
-Microservice
+project_folder/
 │
-├── src
-│   └── app
-│   │   ├── application.py  # FastAPI application
-│   │   ├── lifetime.py     # Startup/Shutdown handlers
-│   │   ├── router.py       # Main router
-│   |   ├── monitoring      # Monitoring service
-│   |   |   ├── schema.py   # Response models
-│   |   |   └── router.py   # Router
-│   ├── config.py           # Application settings
-│   ├── logging.py          # Logging formatters
-│   ├── __init__.py         # Application version
-│   ├── __main__.py         # Startup script for uvicorn
-├── tests                   # Tests for project
-|   ├── conftest.py         # Tests configuration / fixtures
-|   ├── monitoring          # Tests for the monitoring service
-|   |   └── test_health.py  # Tests for the Health check route
-├── .pre-commit-config.yaml # Pre-commit configuration
-├── Dockerfile              # Docker file
-├── docker-compose.yaml     # Docker Compose file
-├── Makefile
-├── LICENSE.txt
-├── poetry.lock
-├── pyproject.toml          # Project Definition
-└── README.md
+├── src/
+│   ├── adapters/
+│   │   ├── __init__.py
+│   │   └── mongoadapter.py
+│   │   └── eventpublisher.py
+│   │   └── redisadpter.py
+│   │   └── redisRepository.py 
+│   ├── entry_point/
+│   │   ├── __init__.py
+│   │   ├── router.py
+│   │   └── api/
+│   │       ├── __init__.py
+│   │       └── # Place your API code here
+│   │
+│   ├── interfaces/
+│   │   ├── __init__.py
+│   │   ├── abstractrepository.py
+│   │   ├── abstractpublisher.py
+│   │   └── abstractUnitOfWork.py
+│   │   # Place your interface code here
+│   │
+│   ├── service_layer/
+│   │   ├── __init__.py
+│   │   └── patient_service.py
+│   │
+│   ├── domain/
+│   │   ├── events/
+│   │   │   ├── __init__.py
+│   │   │   ├── patient_event.py
+│   │   │   # Place your domain events code here
+│   │   │
+│   │   ├── model/
+│   │   │   ├── aggregate/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── patient.py
+│   │   │   │   # Place your aggregate code here
+│   │   │   │
+│   │   │   ├── entity/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── contact.py
+│   │   │   │   ├── communication.py
+│   │   │   │   └── link.py
+│   │   │   │   # Place your entity code here
+│   │   │   │
+│   │   │   └── value_object/
+│   │   │       ├── __init__.py
+│   │   │       └── # Place your value_object code here
+│   │   │
+│   │   ├── command/
+│   │   │   ├── __init__.py
+│   │   │   └── # Place your domain command code here
+│   │   │
+│   │   ├── exception/
+│   │   │   ├── __init__.py
+│   │   │   └── # Place your domain exception code here
+│   │   │
+│   │   └── queries/
+│   │       ├── __init__.py
+│   │       └── # Place your domain queries code here
+│   │
+│   ├── bootstrap.py
+│   │
+│   ├── config/
+│   │   ├── __init__.py
+│   │   └── # Place your configuration files here
+│   │
+│   └── Test/
+│       ├── __init__.py
+│       └── # Place your tests here
+│
+├── requirements.txt
+├── config.py
+└── main.py
+
 
 ```
 
