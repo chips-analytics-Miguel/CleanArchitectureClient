@@ -1,14 +1,8 @@
 from abc import ABC, abstractmethod
 
-
-
 class AbstractUnitOfWork(ABC):
-   
     def __enter__(self) -> "AbstractUnitOfWork":
         return self
-
-    # def __exit__(self, *args):
-    #     self.rollback()
 
     @abstractmethod
     def commit(self):
@@ -21,7 +15,28 @@ class AbstractUnitOfWork(ABC):
     @abstractmethod
     def collect_new_events(self):
         pass
+
     @abstractmethod
     def add_new_event(self, event):
-        # Ajoute un nouvel événement à la liste des événements collectés
+        pass
+
+    # Méthodes spécifiques pour les patients
+    @abstractmethod
+    def add_patient(self, patient):
+        pass
+
+    @abstractmethod
+    def update_patient(self, patient_id: str, patient):
+        pass
+
+    @abstractmethod
+    def delete_patient(self, patient_id: str):
+        pass
+
+    @abstractmethod
+    def get_patient(self, patient_id: str):
+        pass
+
+    @abstractmethod
+    def close(self):
         pass

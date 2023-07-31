@@ -25,7 +25,15 @@ class PatientDeleted(Event):
 class PatientContactAdded(Event):
     pass
 
-
+@dataclass
+class PatientUpdated(Event):
+    patient_id:str
+    family_name:str
+    given_name:List[str]
+    phone_number:str
+    gender:str
+    birthdate:date
+    
 @dataclass
 class PatientContactRemoved(Event):
     pass
