@@ -37,17 +37,10 @@ def create_patient(patient: CreatePatient) -> Dict[str, str]:
         birthdate=patient_dict["birthdate"], 
         )
 
-<<<<<<< HEAD
-    # Instead of directly calling the Commandhandler, use the MessageBus
-    return message_bus.handle(create_patient_command)
-  
-    
-=======
   
     result=message_bus.handle(create_patient_command)
     return {"patient_id":result}
   
->>>>>>> b31a3409f2528b3ba4694284e976b3ae82a8e143
     
 
 
