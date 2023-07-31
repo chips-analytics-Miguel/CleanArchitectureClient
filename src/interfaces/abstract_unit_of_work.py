@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict
+
 
 
 class AbstractUnitOfWork(ABC):
@@ -20,4 +20,8 @@ class AbstractUnitOfWork(ABC):
 
     @abstractmethod
     def collect_new_events(self):
+        pass
+    @abstractmethod
+    def add_new_event(self, event):
+        # Ajoute un nouvel événement à la liste des événements collectés
         pass

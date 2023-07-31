@@ -1,7 +1,7 @@
 from typing import Callable, Dict, List, Type,Union
 from src.domain import commands
 from src.domain import  events
-from src.service_layer import unit_of_work
+from src.service_layer.unit_of_work import MongoUnitOfWork
 
 Message = Union[commands.Command ,events.Event]
 
@@ -9,7 +9,7 @@ Message = Union[commands.Command ,events.Event]
 class MessageBus:
     def __init__(
         self,
-        uow: unit_of_work.AbstractUnitOfWork,
+        uow: MongoUnitOfWork,
         event_handlers: Dict[Type[events.Event], List[Callable]],
         command_handlers: Dict[Type[commands.Command], Callable],
     ):
@@ -41,8 +41,10 @@ class MessageBus:
     def handle_command(self, command: commands.Command):
         try:
             handler = self.command_handlers[type(command)]
-            handler(command)
+            result =handler(command) 
             self.queue.extend(self.uow.collect_new_events())
+            return result
         except Exception:
             # Gérer les exceptions et les erreurs ici
             raise
+   
